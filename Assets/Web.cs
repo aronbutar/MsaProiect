@@ -2,9 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class Web : MonoBehaviour
 {
+    public bool loginSucces = false;
+    public bool registerSucces = false;
+    public string status = "";
+
     void Start()
     {
         // A correct website page.
@@ -12,7 +17,10 @@ public class Web : MonoBehaviour
         //StartCoroutine(Login("testuser","passwrod123"));
         //StartCoroutine(Register("testuser2","passwrod123","hellomail@mail2.com"));
 
+
     }
+
+ 
 
     IEnumerator GetDate(string uri)
     {
@@ -42,26 +50,40 @@ public class Web : MonoBehaviour
 
     public IEnumerator Login(string username,string password)
     {
+        
         WWWForm form=new WWWForm();
         form.AddField("loginUser",username);
         form.AddField("loginPass",password);
         using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/UnityBackend/Login.php", form))
         {
             yield return www.SendWebRequest();
+            
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log(www.error);
+
+                Debug.Log("Error:\n"+www.error);
             }
             else
             {
-                Debug.Log(www.downloadHandler.text);
+                Debug.Log("Login:"+www.downloadHandler.text);
+                if (www.downloadHandler.text == "Login Succes.")
+                {
+                    loginSucces = true;
+                    Debug.Log("Status="+ loginSucces);
+                }
+                    
             }
+        }
+        if (loginSucces)
+        {
+            SceneManager.LoadScene("Menu");
         }
     }
 
-    IEnumerator Register(string username,string password,string email)
+    public IEnumerator Register(string username,string password,string email)
     {
+        Debug.Log("Entered Register\n");
         WWWForm form=new WWWForm();
         form.AddField("loginUser",username);
         form.AddField("loginPass",password);
@@ -73,10 +95,16 @@ public class Web : MonoBehaviour
             if (www.result != UnityWebRequest.Result.Success)
             {
                 Debug.Log(www.error);
+
             }
             else
             {
                 Debug.Log(www.downloadHandler.text);
+                if (www.downloadHandler.text == "New Account created successfully")
+                {
+                    registerSucces = true;
+                }
+                else status = www.downloadHandler.text;
             }
         }
     }
