@@ -5,7 +5,7 @@ $password = "";
 $dbname = "UnityBackend";
 
 $loginuser=$_POST["loginUser"];
-$loginpass=$_POST["loginPass"];
+$loginscore=$_POST["loginScore"];
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -14,21 +14,10 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 //echo "Connected Succesfully to the server, waiting credentials verification";
+$querry= "UPDATE users set score='".$loginscore."' where username like '" .$loginuser ."'" ;
+//$sql = "SELECT * FROM users where username like '" .$loginuser ."'";
+mysqli_query($conn,$querry);
 
-$sql = "SELECT password FROM users where username like '" .$loginuser ."'";
-$result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
-  // output data of each row
-  while($row = $result->fetch_assoc()) {
-    if($row["password"]== $loginpass){
-        echo "Login Succes.";
-    }
-    else echo "Wrong credentials ";
-  }
-}
-else {
-  echo "Username not valid";
-}
 $conn->close();
 ?>

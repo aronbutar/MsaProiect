@@ -9,6 +9,8 @@ public class Web : MonoBehaviour
     public bool loginSucces = false;
     public bool registerSucces = false;
     public string status = "";
+    public string jsonArray = "";
+    public bool finished;
 
     void Start()
     {
@@ -54,7 +56,7 @@ public class Web : MonoBehaviour
         WWWForm form=new WWWForm();
         form.AddField("loginUser",username);
         form.AddField("loginPass",password);
-        using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/UnityBackend/Login.php", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("http://79.113.85.34/UnityBackend/Login.php", form))
         {
             yield return www.SendWebRequest();
             
@@ -77,6 +79,9 @@ public class Web : MonoBehaviour
         }
         if (loginSucces)
         {
+            PlayerPrefs.SetString("username",username);
+            Screen.orientation = ScreenOrientation.LandscapeLeft;
+            getInfo(username);
             SceneManager.LoadScene("Menu");
         }
     }
@@ -88,7 +93,7 @@ public class Web : MonoBehaviour
         form.AddField("loginUser",username);
         form.AddField("loginPass",password);
         form.AddField("loginEmail",email);
-        using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/UnityBackend/Register.php", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("http://79.113.85.34/UnityBackend/Register.php", form))
         {
             yield return www.SendWebRequest();
 
@@ -108,4 +113,33 @@ public class Web : MonoBehaviour
             }
         }
     }
+
+    public IEnumerator getInfo(string username)
+    {
+
+        WWWForm form = new WWWForm();
+        form.AddField("loginUser", username);
+        using (UnityWebRequest www = UnityWebRequest.Post("http://79.113.85.34/UnityBackend/getUserInfo.php", form))
+        {
+            yield return www.SendWebRequest();
+
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+
+                Debug.Log("Error:\n" + www.error);
+            }
+            else
+            {
+                Debug.Log("Login:" + www.downloadHandler.text);
+                if (www.downloadHandler.text != "Error")
+                {
+                    PlayerPrefs.SetInt("score",int.Parse(www.downloadHandler.text));
+                }
+
+            }
+        }
+    }
+
+
 }

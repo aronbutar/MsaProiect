@@ -70,7 +70,7 @@ public class Ground : MonoBehaviour
         float maxJumpHeight = h1 + h2;
         float maxY = maxJumpHeight*0.6f;
         maxY += groundHeight;
-        float minY = 1;
+        float minY = 7;
         float actualY = Random.Range(minY, maxY);
 
         pos.y = actualY - goCollider.size.y / 2;
@@ -84,7 +84,7 @@ public class Ground : MonoBehaviour
         float maxX = totalTime * player.velocity.x;
         maxX *= 0.7f;
         maxX += groundRight;
-        float minX = screenRight + 5;
+        float minX = screenRight + 4;
         float actualX = Random.Range(minX, maxX);
 
         pos.x = actualX+goCollider.size.x/2;
@@ -94,7 +94,7 @@ public class Ground : MonoBehaviour
         goGround.groundHeight = go.transform.position.y + (goCollider.size.y / 2);
 
 
-        int obstacleNum = Random.Range(0, 4);
+        int obstacleNum = Random.Range(0, 2);
         for(int i = 0; i < obstacleNum; i++)
         {
             GameObject box = Instantiate(boxTemplate.gameObject);

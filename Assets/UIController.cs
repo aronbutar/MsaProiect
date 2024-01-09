@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
 public class UIController : MonoBehaviour
 {
     Player player;
@@ -10,6 +11,7 @@ public class UIController : MonoBehaviour
 
     GameObject results;
     Text finalDistanceText;
+    public Text highScoreText;
 
 
     // Start is called before the first frame update
@@ -20,7 +22,7 @@ public class UIController : MonoBehaviour
         finalDistanceText = GameObject.Find("FinalDistanceText").GetComponent<Text>();
         results = GameObject.Find("Results");
         results.SetActive(false);
-        
+       
 
     }
     void Start()
@@ -38,6 +40,13 @@ public class UIController : MonoBehaviour
         {
             results.SetActive(true);
             finalDistanceText.text = distance + " m";
+            if (PlayerPrefs.GetInt("score") < distance)
+            {
+                PlayerPrefs.SetInt("score", distance);
+                StartCoroutine(setScore(PlayerPrefs.GetString("username"), distance));
+            }
+            highScoreText.text = ""+PlayerPrefs.GetInt("score");
+            //Debug.Log(PlayerPrefs.GetInt("score"));
         }
         
         
@@ -51,4 +60,24 @@ public class UIController : MonoBehaviour
         SceneManager.LoadScene("SampleScene");
     }
 
+
+    public IEnumerator setScore(string username, int score)
+    {
+
+        WWWForm form = new WWWForm();
+        form.AddField("loginUser", username);
+        form.AddField("loginScore", score);
+        using (UnityWebRequest www = UnityWebRequest.Post("http://79.113.85.34/UnityBackend/setScore.php", form))
+        {
+            yield return www.SendWebRequest();
+
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+
+                Debug.Log("Error:\n" + www.error);
+            }
+
+        }
+    }
 }

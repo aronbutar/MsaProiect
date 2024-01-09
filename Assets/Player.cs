@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
@@ -30,11 +31,15 @@ public class Player : MonoBehaviour
 
     public LayerMask groundLayerMask;
     public LayerMask obstacleLayerMask;
+
+    private InputAction touchPress;
+    private PlayerInput playerInput;
     void Start()
     {
-        
+       
     }
 
+   
     // Update is called once per frame
     void Update()
     {
@@ -44,7 +49,7 @@ public class Player : MonoBehaviour
         {
             
             //KeyCode.Escape for Android
-            if (Input.GetKeyDown(KeyCode.Space))
+            if ((Input.touchCount > 0) && (Input.GetTouch(0).phase == UnityEngine.TouchPhase.Began))
             {
                 isGrounded = false;
                 velocity.y = jumpVelocity;
@@ -52,10 +57,11 @@ public class Player : MonoBehaviour
                 holdJumpTimer = 0;
             }
         }
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            isHoldingJump = false;
-        }
+        if(Input.touchCount>0)
+            if (Input.GetTouch(0).phase == UnityEngine.TouchPhase.Ended)
+            {
+                isHoldingJump = false;
+            }
     }
     private void FixedUpdate()
     {
@@ -183,7 +189,8 @@ public class Player : MonoBehaviour
 
     void hitObstacle(Obstacle obstacle)
     {
-        Destroy(obstacle.gameObject);
+        obstacle.hit = true;
+        Destroy(obstacle.gameObject,5.0f);
         velocity.x *= 0.7f;
     }
 }

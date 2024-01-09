@@ -22,6 +22,7 @@ public class StartUpController : MonoBehaviour
     GameObject login;
     private void Awake()
     {
+        Screen.orientation = ScreenOrientation.Portrait;
         web = GameObject.Find("Canvas").GetComponent<Web> ();
         register = GameObject.Find("Register");
         login = GameObject.Find("Login");
@@ -38,6 +39,7 @@ public class StartUpController : MonoBehaviour
     public void Login()
     {
         StartCoroutine(web.Login(UsernameInput.text, PasswordInput.text));
+        
         status.text = "Login/Password Incorrect";
 
     }
